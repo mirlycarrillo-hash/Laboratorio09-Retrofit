@@ -40,13 +40,15 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun ProgPrincipal9() {
-    val urlBase = "https://json-placeholder.mock.beeceptor.com/"
+    // 1. Cambiamos a la URL base de DummyJSON
+    val urlBase = "https://dummyjson.com/"
     val retrofit = Retrofit.Builder()
         .baseUrl(urlBase)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
-    val servicio = retrofit.create(PostApiService::class.java)
+    // 2. Apuntamos al nuevo servicio de Quotes
+    val servicio = retrofit.create(QuoteApiService::class.java)
     val navController = rememberNavController()
 
     Scaffold(
@@ -62,7 +64,7 @@ fun BarraSuperior() {
     CenterAlignedTopAppBar(
         title = {
             Text(
-                text = "JSONPlaceHolder Access",
+                text = "DummyJSON Quotes App", // Cambiamos el título a algo llamativo
                 color = Color.White,
                 fontWeight = FontWeight.Bold
             )
@@ -85,10 +87,10 @@ fun BarraInferior(navController: NavHostController) {
             onClick = { navController.navigate("inicio") }
         )
         NavigationBarItem(
-            icon = { Icon(Icons.Outlined.Favorite, contentDescription = "Posts") },
-            label = { Text("Posts") },
-            selected = navController.currentDestination?.route == "posts",
-            onClick = { navController.navigate("posts") }
+            icon = { Icon(Icons.Outlined.Favorite, contentDescription = "Quotes") },
+            label = { Text("Quotes") }, // Cambiamos Posts por Quotes
+            selected = navController.currentDestination?.route == "quotes",
+            onClick = { navController.navigate("quotes") }
         )
     }
 }
@@ -97,7 +99,7 @@ fun BarraInferior(navController: NavHostController) {
 fun Contenido(
     pv: PaddingValues,
     navController: NavHostController,
-    servicio: PostApiService
+    servicio: QuoteApiService
 ) {
     Box(
         modifier = Modifier
@@ -109,12 +111,13 @@ fun Contenido(
             startDestination = "inicio"
         ) {
             composable("inicio") { ScreenInicio() }
-            composable("posts") { ScreenPosts(navController, servicio) }
+            // Cambiamos las rutas para que apunten a las pantallas de Quotes
+            composable("quotes") { ScreenQuotes(navController, servicio) }
             composable(
-                "postsVer/{id}",
+                "quotesVer/{id}",
                 arguments = listOf(navArgument("id") { type = NavType.IntType })
             ) {
-                ScreenPost(navController, servicio, it.arguments!!.getInt("id"))
+                ScreenQuoteDetail(navController, servicio, it.arguments!!.getInt("id"))
             }
         }
     }
@@ -123,6 +126,6 @@ fun Contenido(
 @Composable
 fun ScreenInicio() {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = androidx.compose.ui.Alignment.Center) {
-        Text("INICIO", fontWeight = FontWeight.Bold)
+        Text("BIENVENIDO AL EJERCICIO 1 - DUMMYJSON", fontWeight = FontWeight.Bold)
     }
 }
